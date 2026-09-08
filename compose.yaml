@@ -4,7 +4,7 @@ services:
       context: ./frontend
       dockerfile: dockerfile
     ports:
-      - "3000:3000"
+      - "80:80"
     environment:
       - NODE_ENV=production
     depends_on:
@@ -15,12 +15,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
     env_file:
       - ./backend/.env
   db:
