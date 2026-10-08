@@ -9,7 +9,7 @@ class API {
     
     private constructor(){}
     //direccion
-    static __local = 'http://localhost:8000'
+    static __local = 'http://localhost:8000' //minikube IP
     static __prod = 'https://proyectotsw.onrender.com'
     static ROOT = this.__local;
     static API_URL = '/colectas/api/'

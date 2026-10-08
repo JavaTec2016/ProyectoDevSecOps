@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    app: mysql
+spec:
+#Pods number replicates
+  replicas: 1
+  strategy:
+    type: Recreate   # avoids two pods fighting over the same data dir
+  #Define how the Deployment identify the pods that it could manage
+  selector: 
+    matchLabels:
+     app: mysql
+     #pod template specification
+  template:
+    metadata:
+    #define teh labels for all pods
+      labels:
+        app: mysql       
+    spec:
+      containers:
+        - name: mysql
+          image: container-registry.oracle.com/mysql/community-server:8.0
+          imagePullPolicy: IfNotPresent
+          #open the port to allow send and receive traffic in teh container
+          ports:
+            - containerPort: 3306
+              name: mysql
+            #read envars from secret file
+          envFrom:
+            - secretRef:
+                name: secret-mysql
+          volumeMounts:
+          # This is the path in the container on which the mounting will take place.
+          # readiness pa checar que si este jalando
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "mysqladmin ping -uroot -p\"$MYSQL_ROOT_PASSWORD\""]
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: mysql-pvc

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  # minikube's default StorageClass ("standard") provisions the volume dynamically
+  resources:
+    requests:
+      storage: 5Gi
+# migrar el python con
+# kubectl exec deploy/backend-deployment -- python manage.py migrate

@@ -1,0 +1,22 @@
+//actualizar images
+docker build -t proyectambo-web --no-cache frontend/.
+docker tag proyectambo-web:latest javatec2016/web:1.0
+docker push javatec2016/web:1.0
+
+docker build -t proyectambo-api --no-cache backend/.
+docker tag proyectambo-api:latest javatec2016/api:1.0
+docker push javatec2016/api:1.0
+
+//actualizar deploys
+kubectl delete deployment frontend-deployment
+kubectl delete deployment backend-deployment
+
+kubectl apply -f kubernetes/
+
+//forwardear los svcs
+kubectl port-forward svc/backend-service 8000:8000
+kubectl port-forward svc/frontend-service 80:80
+
+//migrar la bd
+kubectl exec -it deploy/backend-deployment -- /bin/bash
+kubectl exec deploy/backend-deployment -- sh ./build.sh

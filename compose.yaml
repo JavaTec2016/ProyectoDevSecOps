@@ -19,6 +19,11 @@ services:
       - ./backend/.env
   db:
     image: container-registry.oracle.com/mysql/community-server:8.0
+    environment:
+      - MYSQL_DATABASE=db_colectas_2026
+      - MYSQL_USER=dominik
+      - MYSQL_PASSWORD=santiago
+      - MYSQL_ROOT_PASSWORD=santiago
     ports:
       - "3306:3306"
   
