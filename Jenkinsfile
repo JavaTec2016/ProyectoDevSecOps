@@ -60,7 +60,7 @@ pipeline{
             git checkout -B main origin/main
             git merge --no-ff ${GIT_COMMIT} -m "Merge test into main (build ${BUILD_NUMBER})"
 
-            git push https://${GIT_USER}:${GIT_TOKEN}@github.com/ProyectoDevSecOps.git main
+            git push "https://${GIT_USER}:${GIT_TOKEN}@${GIT_URL#https://}" main
           '''
         }
       }
