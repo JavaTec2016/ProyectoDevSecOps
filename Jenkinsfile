@@ -36,8 +36,7 @@ pipeline{
         sh 'docker compose build'
       }
     }
-  }
-  stage('Mergear test') {
+    stage('Mergear test') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'github_jenkins',
                          usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
@@ -54,4 +53,5 @@ pipeline{
         }
       }
     }
+  }
 }
