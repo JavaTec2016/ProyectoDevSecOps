@@ -8,18 +8,27 @@ pipeline{
   }
   stages{
     stage('Backend tests') {
+      environment {
+        DB_HOST = 'jenkins_db'
+        DB_NAME = 'db_colectas_2026'
+        DB_USER = 'dominik'
+        DB_PASSWORD = 'santiago'
+      }
       steps {
-        sh '''
-          docker compose -f compose.yaml up -d db
-          docker compose -f compose.yaml run -d api
-        '''
+        dir('backend') {
+          sh '''
+            python3 -m venv .venv
+            . .venv/bin/activate
+            pip install -r requirements.txt
+            python manage.py test
+          '''
+        }
       }
     }
     stage('Frontend tests') {
       steps {
         dir('frontend') {
-          sh 'npm ci'
-          sh 'npm run dev'
+          sh 'npm ci' //no hay script de pruebas
         }
       }
     }
@@ -31,9 +40,12 @@ pipeline{
         }
       }
     }
-    stage('Build images') {
+    stage('Build parts') {
       steps {
-        sh 'docker compose build'
+        dir('frontend') { sh 'npm run build' }
+        dir('backend') {
+          sh '. .venv/bin/activate && python manage.py check'
+        }
       }
     }
     stage('Mergear test') {
