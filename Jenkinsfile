@@ -7,6 +7,12 @@ pipeline{
     disableConcurrentBuilds()
   }
   stages{
+    stage('Notify start') {
+      steps {
+        slackSend(color: '#439FE0',
+                  message: "Iniciando: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|open>)")
+      }
+    }
     stage('Backend tests') {
       environment {
         DB_HOST = 'jenkins_db'
@@ -63,7 +69,29 @@ pipeline{
             git push "https://${GIT_USER}:${GIT_TOKEN}@${GIT_URL#https://}" main
           '''
         }
+        slackSend(color: 'good',
+                  message: "Merged `test` into `main` (${env.GIT_COMMIT.take(7)}) after build #${env.BUILD_NUMBER}")
       }
+    }
+  }
+  //despues de buildear
+  post {
+    success {
+      slackSend(color: 'good',
+                message: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|open>)")
+    }
+    failure {
+      slackSend(color: 'danger',
+                message: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}console|console log>)")
+      sh 'git merge --abort || true'
+    }
+    unstable {
+      slackSend(color: 'warning',
+                message: "UNSTABLE: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|open>)")
+    }
+    aborted {
+      slackSend(color: 'warning',
+                message: "ABORTED: ${env.JOB_NAME} #${env.BUILD_NUMBER}")
     }
   }
 }
