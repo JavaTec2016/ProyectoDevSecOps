@@ -60,7 +60,7 @@ pipeline{
             git fetch origin main:refs/remotes/origin/main || exit /b 1
             git checkout -B main origin/main || exit /b 1
             git merge --no-ff %GIT_COMMIT% -m "Merge test into main (build %BUILD_NUMBER%)" || exit /b 1
-            git push "https://%GIT_USER%:%GIT_TOKEN%@%REPO_PATH%" main || exit /b 1
+            git push origin main || exit /b 1
           '''
         }
         slackSend(color: 'good',
@@ -82,7 +82,7 @@ pipeline{
     failure {
       slackSend(color: 'danger',
                 message: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}console|console log>)")
-      bat 'git merge --abort || true'
+      bat 'git merge --abort || exit /b 1'
     }
     unstable {
       slackSend(color: 'warning',
