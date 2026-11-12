@@ -24,7 +24,7 @@ pipeline{
         dir('backend') {
           bat '''
             python -m venv .venv
-            .venv/Scripts/activate
+            .venv\\Scripts\\activate.bat
             pip install -r requirements.txt
             python manage.py test
           '''
@@ -50,7 +50,7 @@ pipeline{
       steps {
         dir('frontend') { bat 'npm run build' }
         dir('backend') {
-          bat '.venv/Scripts/activate && python manage.py check'
+          bat '.venv\\Scripts\\activate.bat && python manage.py check'
         }
       }
     }
