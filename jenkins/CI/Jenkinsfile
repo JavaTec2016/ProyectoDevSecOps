@@ -59,9 +59,10 @@ pipeline{
 
             git fetch origin main:refs/remotes/origin/main
             git checkout -B main origin/main
+            git show ${GIT_COMMIT}
             git merge --no-ff ${GIT_COMMIT} -m "Merge test into main (build ${BUILD_NUMBER})"
 
-            git push "https://${GIT_USER}:${GIT_TOKEN}@${GIT_URL#https://}" main
+            git push "https://github.com/JavaTec2016/ProyectoDevSecOps.git" main
           '''
         }
         slackSend(color: 'good',
