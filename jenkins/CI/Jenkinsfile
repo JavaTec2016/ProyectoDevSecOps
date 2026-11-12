@@ -23,7 +23,7 @@ pipeline{
       steps {
         dir('backend') {
           bat '''
-            python3 -m venv .venv
+            python -m venv .venv
             . .venv/bin/activate
             pip install -r requirements.txt
             python manage.py test
@@ -41,7 +41,7 @@ pipeline{
     stage('SonarQube analysis') {
       steps {
         script { scannerHome = tool 'sonarqube_scanner' }
-        withSonarQubeEnv('sonarqube') {
+        withSonarQubeEnv('SonnarScanner') {
           bat "${scannerHome}/bin/sonar-scanner"
         }
       }
