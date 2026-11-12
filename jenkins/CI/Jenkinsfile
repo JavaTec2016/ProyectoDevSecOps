@@ -75,7 +75,7 @@ pipeline{
     }
     stage('Despliegue job') {
       steps {
-        build job:'pipa_proyesto_CD', wait: true
+        build job:'pipa_proyecto_CD', wait: true
       }
     }
   }
