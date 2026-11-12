@@ -1,0 +1,37 @@
+pipeline {
+  agent any
+  stages {
+    stage('clone repository') {
+      steps {
+        bat '''java -version
+            mvn --version
+            git --version'''
+      }
+    }
+
+    stage('Despliegue kubernetes') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'kubernetes-jenkis-server-account',
+                        variable: 'api_token'
+                    )
+                ]) {
+                    bat '''
+                        @echo off
+                        echo Verificando conexion con Kubernetes...
+
+                        kubectl --token "%api_token%" --server https://127.0.0.1:60709 --insecure-skip-tls-verify=true get nodes
+
+                        echo Aplicando manifiesto de Kubernetes...
+
+                        kubectl --token "%api_token%" --server https://127.0.0.1:60709 --insecure-skip-tls-verify=true apply -f /kubernetes/.
+
+                        echo Verificando deployments...
+                        kubectl --token "%api_token%" --server https://127.0.0.1:60709 --insecure-skip-tls-verify=true get deployments
+                    '''
+                }
+            }
+        }
+    }
+}

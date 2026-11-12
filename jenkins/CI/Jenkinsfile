@@ -73,6 +73,11 @@ pipeline{
                   message: "Merged `test` into `main` (${env.GIT_COMMIT.take(7)}) after build #${env.BUILD_NUMBER}")
       }
     }
+    stage('Despliegue job') {
+      steps {
+        build job:'pipa_proyesto_CD', wait: true
+      }
+    }
   }
   //despues de buildear
   post {
