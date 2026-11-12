@@ -4,7 +4,6 @@ pipeline {
     stage('clone repository') {
       steps {
         bat '''java -version
-            mvn --version
             git --version'''
       }
     }
@@ -21,14 +20,14 @@ pipeline {
                         @echo off
                         echo Verificando conexion con Kubernetes...
 
-                        kubectl --token "%api_token%" --server https://127.0.0.1:60709 --insecure-skip-tls-verify=true get nodes
+                        kubectl --token "%api_token%" --server https://127.0.0.1:49754 --insecure-skip-tls-verify=true get nodes
 
                         echo Aplicando manifiesto de Kubernetes...
 
-                        kubectl --token "%api_token%" --server https://127.0.0.1:60709 --insecure-skip-tls-verify=true apply -f /kubernetes/.
+                        kubectl --token "%api_token%" --server https://127.0.0.1:49754 --insecure-skip-tls-verify=true apply -f /kubernetes/.
 
                         echo Verificando deployments...
-                        kubectl --token "%api_token%" --server https://127.0.0.1:60709 --insecure-skip-tls-verify=true get deployments
+                        kubectl --token "%api_token%" --server https://127.0.0.1:49754 --insecure-skip-tls-verify=true get deployments
                     '''
                 }
             }
