@@ -22,12 +22,7 @@ pipeline{
       }
       steps {
         dir('backend') {
-          bat '''
-            python -m venv .venv
-            . .venv/bin/activate
-            pip install -r requirements.txt
-            python manage.py test
-          '''
+          bat 'python -m venv .venv && .venv\\Scripts\\activate.bat && pip install -r requirements.txt && python manage.py test'
         }
       }
     }
@@ -50,7 +45,7 @@ pipeline{
       steps {
         dir('frontend') { bat 'npm run build' }
         dir('backend') {
-          bat '. .venv/bin/activate && python manage.py check'
+          bat '.venv\\Scripts\\activate.bat && python manage.py check'
         }
       }
     }
@@ -62,11 +57,10 @@ pipeline{
             git config user.name  "Jenkins"
             git config user.email "jenkins@local"
 
-            git fetch origin main:refs/remotes/origin/main
-            git checkout -B main origin/main
-            git merge --no-ff ${GIT_COMMIT} -m "Merge test into main (build ${BUILD_NUMBER})"
-
-            git push "https://${GIT_USER}:${GIT_TOKEN}@${GIT_URL#https://}" main
+            git fetch origin main:refs/remotes/origin/main || exit /b 1
+            git checkout -B main origin/main || exit /b 1
+            git merge --no-ff %GIT_COMMIT% -m "Merge test into main (build %BUILD_NUMBER%)" || exit /b 1
+            git push "https://%GIT_USER%:%GIT_TOKEN%@github.com/JavaTec2016/ProyectoDevSecOps.git" main || exit /b 1
           '''
         }
         slackSend(color: 'good',
@@ -88,7 +82,7 @@ pipeline{
     failure {
       slackSend(color: 'danger',
                 message: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}console|console log>)")
-      bat 'git merge --abort || true'
+      bat 'git merge --abort || exit /b 1'
     }
     unstable {
       slackSend(color: 'warning',
